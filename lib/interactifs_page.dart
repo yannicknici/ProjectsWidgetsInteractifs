@@ -16,6 +16,7 @@ class InteractifsPageState extends State<InteractifsPage> {
    late TextEditingController surname;
    late TextEditingController name;
    late TextEditingController secret;
+   bool showSecret = false;
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class InteractifsPageState extends State<InteractifsPage> {
   Widget build(BuildContext context) {
    return Scaffold(
      appBar: AppBar(
-       backgroundColor: Colors.purple,
+       backgroundColor: Colors.deepPurple,
        title: const Text('Mon profile', style: TextStyle(color: Colors.white, fontFamily: CupertinoIcons.iconFont),
        ),
      ),
@@ -54,7 +55,7 @@ class InteractifsPageState extends State<InteractifsPage> {
            Card(
              margin: const EdgeInsets.only(left: 2, top: 0, right: 2, bottom: 10),
              elevation: 10,
-             color: Colors.purpleAccent.shade100,
+             color: Colors.deepPurpleAccent.shade100,
              child: Container(
                width:  MediaQuery.of(context).size.width,
                margin: const EdgeInsets.all(10),
@@ -66,16 +67,37 @@ class InteractifsPageState extends State<InteractifsPage> {
                    Text('Taille : ${myProfile.setHeight()}'),
                    Text('Genre : ${myProfile.genderString()}'),
                    Text('Hobbies : ${myProfile.setHobbies()}'),
-                   Text('Langage de programmation favori : ${myProfile.favoriteLang}')
+                   Text('Langage de programmation favori : ${myProfile.favoriteLang}'),
+                   ElevatedButton(
+                       onPressed: updateSecret,
+                       child: Text((showSecret)? 'cacher secret' : 'Montrer secret'),
+                   ),
+                   (showSecret) ? Text(myProfile.secret) :  const SizedBox(height: 0, width: 0,),
+
                  ],
                ),
              ),
            ),
-           const Divider(color: Colors.purpleAccent, thickness: 2,),
-           myText(text: 'Modifier les infos', couleur: Colors.red, weight: FontWeight.bold ),
+            Divider(color: Colors.deepPurpleAccent.shade100, thickness: 2,),
+           myText(text: 'Modifier les infos', couleur: Colors.deepPurpleAccent.shade100, weight: FontWeight.bold ),
            myTextField(controller: surname, hint: 'entrez votre prenom'),
            myTextField(controller: name, hint: 'entrez votre nom'),
-           myTextField(controller: secret, hint: 'donnez nous un secret', isSecret: true)
+           myTextField(controller: secret, hint: 'donnez nous un secret', isSecret: true),
+           Row(
+             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             mainAxisSize: MainAxisSize.max,
+             children: [
+               Text('Genre : ${myProfile.genderString()}'),
+               Switch(
+                   value: myProfile.gender,
+                   onChanged: ((newBool){
+                     setState(() {
+                       myProfile.gender = newBool;
+                     });
+                   })
+               )
+             ],
+           )
          ],
        ),
      ),
@@ -109,4 +131,9 @@ class InteractifsPageState extends State<InteractifsPage> {
     });
   }
 
+  updateSecret(){
+    setState(() {
+      showSecret = !showSecret;
+    });
+  }
 }
