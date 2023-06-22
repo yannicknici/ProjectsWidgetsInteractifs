@@ -17,6 +17,13 @@ class InteractifsPageState extends State<InteractifsPage> {
    late TextEditingController name;
    late TextEditingController secret;
    bool showSecret = false;
+   Map<String, bool> hobbies = {
+     'Musique': false,
+     'Programmation': false,
+     'Football': false,
+     'Films': false,
+     'Livres': false
+   };
 
   @override
   void initState() {
@@ -83,20 +90,45 @@ class InteractifsPageState extends State<InteractifsPage> {
            myTextField(controller: surname, hint: 'entrez votre prenom'),
            myTextField(controller: name, hint: 'entrez votre nom'),
            myTextField(controller: secret, hint: 'donnez nous un secret', isSecret: true),
-           Row(
-             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-             mainAxisSize: MainAxisSize.max,
+           Padding(padding:  const EdgeInsets.all(10),
+           child: Column(
              children: [
-               Text('Genre : ${myProfile.genderString()}'),
-               Switch(
-                   value: myProfile.gender,
-                   onChanged: ((newBool){
-                     setState(() {
-                       myProfile.gender = newBool;
-                     });
-                   })
-               )
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 mainAxisSize: MainAxisSize.max,
+                 children: [
+                   Text('Genre : ${myProfile.genderString()}'),
+                   Switch(
+                       value: myProfile.gender,
+                       onChanged: ((newBool){
+                         setState(() {
+                           myProfile.gender = newBool;
+                         });
+                       })
+                   )
+                 ],
+               ),
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 mainAxisSize: MainAxisSize.max,
+                 children: [
+                   Text('Taille: ${myProfile.setHeight()}'),
+                   Slider(
+                       value: myProfile.height,
+                       min: 0,
+                       max: 240,
+                       onChanged: ((newHeight){
+                        setState(() {
+                          myProfile.height = newHeight;
+                        });
+                       })
+                   )
+                 ],
+               ),
+              Divider(color: Colors.deepPurpleAccent.shade100, thickness: 2,),
+              myHobbies(),
              ],
+           ),
            )
          ],
        ),
@@ -106,19 +138,20 @@ class InteractifsPageState extends State<InteractifsPage> {
 
   Text myText({required String text, required Color couleur, FontWeight weight = FontWeight.normal}) => Text(text, style: TextStyle(fontSize: 18, color: couleur),);
 
-  TextField myTextField({ required TextEditingController controller, required String hint, bool isSecret = false}){
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hint,
-
-      ),
-      obscureText: isSecret,
-      onSubmitted: ((newValue){
-       // print(newValue);
-      updateUser();
-      }),
-    );
+  Padding myTextField({ required TextEditingController controller, required String hint, bool isSecret = false}){
+    return Padding(padding: const EdgeInsets.all(10),
+      child:  TextField(
+        controller: controller,
+        decoration: InputDecoration(
+            hintText: hint,
+            border:  OutlineInputBorder(borderRadius: BorderRadius.circular(25))
+        ),
+        obscureText: isSecret,
+        onSubmitted: ((newValue){
+          // print(newValue);
+          updateUser();
+        }),
+      ));
   }
 
   updateUser(){
@@ -135,5 +168,36 @@ class InteractifsPageState extends State<InteractifsPage> {
     setState(() {
       showSecret = !showSecret;
     });
+  }
+
+  Column myHobbies (){
+    List<Widget> widgets = [];
+    hobbies.forEach((hobby, like) {
+      Row r = Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(hobby),
+          Checkbox(
+              value: like,
+              onChanged: (newBool){
+                setState(() {
+                  hobbies[hobby] = newBool ?? false;
+                  List<String> str = [];
+                  hobbies.forEach((key, value) {
+                    if(value == true){
+                      str.add(key);
+                    }
+                  });
+                  myProfile.hobbies = str;
+                });
+              }
+          )
+        ],
+      );
+      widgets.add(r);
+    });
+
+    return Column(children: widgets,);
   }
 }

@@ -36,7 +36,7 @@ class Profile {
 
   String genderString() => (gender) ? 'feminin' : 'Masculin';
 
-  String setHeight() => '$height cm';
+  String setHeight() => '${height.toInt()} cm';
 
   String setHobbies(){
     String tohobbiesString = '';
